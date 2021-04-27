@@ -20,9 +20,7 @@ func NewPool(options ...OptionSetter) (*Pool, error) {
 	// options pattern
 	opts := loadOptions(options...)
 	// pool instance
-	pool := &Pool{}
-	// loading options
-	pool.Opts = opts
+	pool := &Pool{Opts: opts}
 	// the cache
 	pool.cache = NewCache(pool)
 	return pool, nil
@@ -33,8 +31,9 @@ func (p *Pool) Submit(task func()) error {
 	w := p.cache.Get()
 	// use the worker thats free
 	if w != nil {
-		go w.run()
+		w.run()
 		w.tasks <- task
+		p.AtCapacity++
 		return nil
 	}
 	// if no worker is free, check if pool has reached size
@@ -50,7 +49,11 @@ func (p *Pool) Submit(task func()) error {
 }
 
 func (p *Pool) spawnWorkerAndUpdateCapacity(w *worker, task func()) {
-	go w.run()
+	w.run()
 	w.tasks <- task
 	p.AtCapacity++
+}
+
+func (p *Pool) RunningWorkers() int {
+	return p.AtCapacity
 }
