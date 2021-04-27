@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	pool, err := k.NewPool(k.WithContext(false), k.WithPoolSize(2))
+	pool, err := k.NewPool(k.WithContext(), k.WithPoolSize(2))
 
 	if err != nil {
 		return
@@ -22,8 +22,25 @@ func main() {
 		fmt.Println("TWO TASK")
 	})
 
-	time.Sleep(time.Second * 4)
 	pool.Submit(func() {
 		fmt.Println("THREE TASK")
 	})
+
+	pool.Submit(func() {
+		fmt.Println("FOUR TASK")
+	})
+	pool.Submit(func() {
+		fmt.Println("FIVE TASK")
+	})
+	pool.Submit(func() {
+		fmt.Println("SIX TASK")
+	})
+	rw := pool.AtCapacity
+	fmt.Println(rw)
+
+	time.Sleep(time.Second * 6)
+
+	rw = pool.AtCapacity
+	fmt.Println(rw)
+
 }
