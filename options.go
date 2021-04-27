@@ -18,9 +18,9 @@ func loadOptions(opts ...OptionSetter) *Options {
 	return newOptionsInstance
 }
 
-func WithContext(val bool) OptionSetter {
+func WithContext() OptionSetter {
 	return func(o *Options) {
-		o.WithContext = val
+		o.WithContext = true
 	}
 }
 
