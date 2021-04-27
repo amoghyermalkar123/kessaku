@@ -7,24 +7,24 @@ import (
 )
 
 const (
-	RunTimes   = 1000000
-	BenchParam = 10
+	runTimes   = 1000000
+	benchParam = 10
 	// BenchAntsSize      = 200000
 	// DefaultExpiredTime = 10 * time.Second
 )
 
 func demoFunc() {
-	time.Sleep(time.Duration(BenchParam) * time.Millisecond)
+	time.Sleep(time.Duration(benchParam) * time.Millisecond)
 }
 
 func BenchmarkKessakuPool(b *testing.B) {
 	var wg sync.WaitGroup
-	p, _ := NewPool(WithContext(false), WithPoolSize(5))
+	p, _ := NewPool(WithContext(), WithPoolSize(5))
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		wg.Add(RunTimes)
-		for j := 0; j < RunTimes; j++ {
+		wg.Add(runTimes)
+		for j := 0; j < runTimes; j++ {
 			_ = p.Submit(func() {
 				demoFunc()
 				wg.Done()
