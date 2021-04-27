@@ -1,10 +1,7 @@
 package kessaku
 
 import (
-	"log"
 	"math/rand"
-
-	"github.com/sirupsen/logrus"
 )
 
 type cache struct {
@@ -23,7 +20,6 @@ func NewCache(poolRef *Pool) *cache {
 }
 
 func (c *cache) Put(w *worker) {
-	logrus.Info("Put has been called")
 	c.freeWorkers = append(c.freeWorkers, w)
 }
 
@@ -32,7 +28,6 @@ func (c *cache) Get() *worker {
 		return nil
 	}
 	if len(c.freeWorkers) == 1 {
-		log.Println("cache", c.freeWorkers)
 		w := c.freeWorkers[0]
 		return w
 	}
