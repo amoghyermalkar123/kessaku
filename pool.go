@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"os"
-	"sync"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -15,8 +14,6 @@ type Pool struct {
 	cache        *cache
 	batchManager *Batch
 }
-
-var initBatchWorker sync.Once
 
 func NewPool(options ...OptionSetter) (*Pool, error) {
 	log.SetOutput(os.Stdout)
