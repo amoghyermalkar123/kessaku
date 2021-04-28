@@ -4,7 +4,6 @@ type Options struct {
 	WithContext bool
 	PoolSize    int
 	WithBatch   bool
-	TaskCache   chan func()
 }
 
 type OptionSetter func(o *Options)
@@ -34,6 +33,5 @@ func WithPoolSize(val int) OptionSetter {
 func WithBatch() OptionSetter {
 	return func(o *Options) {
 		o.WithBatch = true
-		o.TaskCache = make(chan func())
 	}
 }
