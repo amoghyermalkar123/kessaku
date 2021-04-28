@@ -31,6 +31,7 @@ func (p *Pool) Submit(task func()) error {
 	// process order respecting bactched jobs
 	if p.Opts.WithBatch && !p.batchManager.processor.isInactive {
 		p.batchProcessor(task)
+		return nil
 	}
 	// get from cache
 	w := p.cache.Get()
