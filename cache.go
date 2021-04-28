@@ -34,5 +34,6 @@ func (c *cache) Get() *worker {
 	ix := rand.Intn(len(c.freeWorkers) - 1)
 	w := c.freeWorkers[ix]
 	c.freeWorkers[len(c.freeWorkers)-1], c.freeWorkers[ix] = c.freeWorkers[ix], c.freeWorkers[len(c.freeWorkers)-1]
+	c.freeWorkers = c.freeWorkers[:len(c.freeWorkers)-1]
 	return w
 }
