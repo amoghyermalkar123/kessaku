@@ -3,7 +3,8 @@ package kessaku
 type Options struct {
 	WithContext bool
 	PoolSize    int
-	// TODO: WithTaskCache
+	WithBatch   bool
+	TaskCache   chan func()
 }
 
 type OptionSetter func(o *Options)
@@ -27,5 +28,12 @@ func WithContext() OptionSetter {
 func WithPoolSize(val int) OptionSetter {
 	return func(o *Options) {
 		o.PoolSize = val
+	}
+}
+
+func WithBatch() OptionSetter {
+	return func(o *Options) {
+		o.WithBatch = true
+		o.TaskCache = make(chan func())
 	}
 }
