@@ -15,9 +15,14 @@ type Pool struct {
 	batchManager *Batch
 }
 
-func NewPool(options ...OptionSetter) (*Pool, error) {
+func init() {
 	log.SetOutput(os.Stdout)
 	log.SetFormatter(&log.JSONFormatter{})
+}
+
+func NewPool() (*Pool, error) {
+	// parse pool options
+	options := parseAPI()
 	// options pattern
 	opts := loadOptions(options...)
 	// pool instance
@@ -28,8 +33,8 @@ func NewPool(options ...OptionSetter) (*Pool, error) {
 }
 
 func (p *Pool) Submit(task func()) error {
-	// process order respecting bactched jobs
-	if p.Opts.WithBatch && !p.batchManager.processor.isInactive {
+	// process order respecting batched jobs
+	if p.Opts.WithBatch && p.batchManager != nil {
 		p.batchProcessor(task)
 		return nil
 	}

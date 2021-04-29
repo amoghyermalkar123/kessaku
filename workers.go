@@ -25,6 +25,7 @@ func (w *worker) run() {
 			if p := recover(); p != nil {
 				log.Warn("worker exiting with a panic %s", p)
 			}
+
 		}()
 
 		for {
