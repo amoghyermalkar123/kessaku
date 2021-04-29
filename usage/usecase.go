@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	pool, err := k.NewPool(k.WithContext(), k.WithPoolSize(2))
+	pool, err := k.NewPool()
 
 	if err != nil {
 		return

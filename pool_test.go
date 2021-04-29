@@ -14,14 +14,14 @@ var _ = Describe("Pool Tests", func() {
 	Describe("NewPool", func() {
 
 		It("Should create a pool with arbitrary amount of workers", func() {
-			pool, err := k.NewPool(k.WithPoolSize(5))
+			pool, err := k.NewPool()
 			Expect(err).To(BeNil())
 			Expect(pool.Opts.PoolSize).To(Equal(5))
 			Expect(pool.Opts.WithContext).To(Equal(false))
 		})
 
 		It("Should be able to submit tasks to the pool", func() {
-			pool, err := k.NewPool(k.WithPoolSize(5))
+			pool, err := k.NewPool()
 			Expect(err).To(BeNil())
 			Expect(pool.Opts.PoolSize).To(Equal(5))
 			Expect(pool.Opts.WithContext).To(Equal(false))

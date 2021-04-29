@@ -1,0 +1,7 @@
+pool:
+    context : yes
+    size : 1
+    batch : 
+        isActive : yes
+        timeout : no
+        manual : yes 

@@ -19,7 +19,7 @@ func demoFunc() {
 
 func BenchmarkKessakuPool(b *testing.B) {
 	var wg sync.WaitGroup
-	p, _ := NewPool(WithContext(), WithPoolSize(5))
+	p, _ := NewPool()
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
