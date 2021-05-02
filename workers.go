@@ -1,6 +1,7 @@
 package kessaku
 
 import (
+	"context"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -18,7 +19,7 @@ func NewWorker(p *Pool) *worker {
 	}
 }
 
-func (w *worker) run() {
+func (w *worker) run(ctx context.Context) {
 	go func() {
 		// panic recovery
 		defer func() {
@@ -29,6 +30,8 @@ func (w *worker) run() {
 
 		for {
 			select {
+			case <-ctx.Done():
+				return
 			case <-time.After(5 * time.Second):
 				w.pool.cache.Put(w)
 				w.pool.AtCapacity--

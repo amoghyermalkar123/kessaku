@@ -15,6 +15,14 @@ type Pool struct {
 	batchManager *Batch
 }
 
+type runner interface {
+	run(context.Context)
+}
+
+func runProcs(r runner, ctx context.Context) {
+	r.run(ctx)
+}
+
 func NewPool(options ...OptionSetter) (*Pool, error) {
 	log.SetOutput(os.Stdout)
 	log.SetFormatter(&log.JSONFormatter{})
@@ -28,6 +36,8 @@ func NewPool(options ...OptionSetter) (*Pool, error) {
 }
 
 func (p *Pool) Submit(task func()) error {
+	// ctx
+	ctx := context.Background()
 	// process order respecting bactched jobs
 	if p.Opts.WithBatch && !p.batchManager.processor.isInactive {
 		p.batchProcessor(task)
@@ -37,7 +47,7 @@ func (p *Pool) Submit(task func()) error {
 	w := p.cache.Get()
 	// use the worker thats free
 	if w != nil {
-		w.run()
+		runProcs(w, ctx)
 		w.tasks <- task
 		p.AtCapacity++
 		return nil
@@ -50,12 +60,12 @@ func (p *Pool) Submit(task func()) error {
 	// if pool is not at capacity create one at run-ime
 	w = NewWorker(p)
 	// spawn the newly created worker
-	p.spawnWorkerAndUpdateCapacity(w, task)
+	p.spawnWorkerAndUpdateCapacity(w, task, ctx)
 	return nil
 }
 
-func (p *Pool) spawnWorkerAndUpdateCapacity(w *worker, task func()) {
-	w.run()
+func (p *Pool) spawnWorkerAndUpdateCapacity(w *worker, task func(), ctx context.Context) {
+	runProcs(w, ctx)
 	w.tasks <- task
 	p.AtCapacity++
 }
@@ -71,7 +81,7 @@ func (p *Pool) batchProcessor(task func()) {
 		p.batchManager.stopper = stopBatchedWorker
 		p.batchManager.processor = &batchWorker{}
 		p.batchManager.processor.tasks = make(chan func())
-		go p.batchManager.processor.batch(ctx)
+		go runProcs(p.batchManager.processor, ctx)
 		p.batchManager.processor.tasks <- task
 	} else {
 		p.batchManager.processor.tasks <- task

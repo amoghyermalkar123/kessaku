@@ -16,7 +16,7 @@ type batchWorker struct {
 	isInactive bool
 }
 
-func (b *batchWorker) batch(ctx context.Context) {
+func (b *batchWorker) run(ctx context.Context) {
 	go func() {
 		defer func() {
 			if p := recover(); p != nil {
