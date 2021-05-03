@@ -2,18 +2,31 @@ package kessaku
 
 import (
 	"context"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 )
 
-type Batch struct {
-	stopper   func()
-	processor *batchWorker
+type batchWorker struct {
+	stopper func()
+	tasks   chan func()
+	// currently there's not much use of this variable but will be keeping it in-case i ever need it
+	isInactive bool
 }
 
-type batchWorker struct {
-	tasks      chan func()
-	isInactive bool
+var once sync.Once
+
+func NewBatchWorker() (*batchWorker, context.Context) {
+	bw := &batchWorker{}
+	ctx := context.Background()
+	ctx, stopBatchedWorker := context.WithCancel(ctx)
+
+	once.Do(func() {
+		bw.stopper = stopBatchedWorker
+		bw.tasks = make(chan func())
+	})
+
+	return bw, ctx
 }
 
 func (b *batchWorker) run(ctx context.Context) {
